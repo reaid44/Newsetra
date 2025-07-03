@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { fetchTopHeadlines, fetchCategoryNews, searchNews, NewsArticle } from "@/services/newsService";
 import { SearchBox } from "@/components/SearchBox";
 
@@ -23,38 +24,92 @@ export const HeroSection = () => {
   const [categoryLoading, setCategoryLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchLoading, setSearchLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [loadMoreLoading, setLoadMoreLoading] = useState(false);
+  const [canLoadMore, setCanLoadMore] = useState(true);
 
-  const loadCategoryNews = async (category: string) => {
-    setCategoryLoading(true);
+  const loadCategoryNews = async (category: string, page: number = 1, append: boolean = false) => {
+    if (page === 1) {
+      setCategoryLoading(true);
+    } else {
+      setLoadMoreLoading(true);
+    }
+    
     try {
-      const newsData = await fetchCategoryNews(category);
-      setCategoryNews(newsData.articles || []);
+      const newsData = await fetchCategoryNews(category, 'us', 'en', page);
+      if (append) {
+        setCategoryNews(prev => [...prev, ...(newsData.articles || [])]);
+      } else {
+        setCategoryNews(newsData.articles || []);
+      }
+      
+      // Check if we can load more (assuming GNews returns fewer articles when no more available)
+      setCanLoadMore((newsData.articles || []).length >= 10);
     } catch (error) {
       console.error('Failed to load category news');
-      setCategoryNews([]);
+      if (!append) {
+        setCategoryNews([]);
+      }
+      setCanLoadMore(false);
     } finally {
-      setCategoryLoading(false);
+      if (page === 1) {
+        setCategoryLoading(false);
+      } else {
+        setLoadMoreLoading(false);
+      }
     }
   };
 
-  const handleSearch = async (query: string) => {
+  const handleSearch = async (query: string, page: number = 1, append: boolean = false) => {
     setSearchQuery(query);
     
     if (!query.trim()) {
       // If search is cleared, reload category news
+      setCurrentPage(1);
+      setCanLoadMore(true);
       loadCategoryNews(selectedCategory);
       return;
     }
 
-    setSearchLoading(true);
+    if (page === 1) {
+      setSearchLoading(true);
+    } else {
+      setLoadMoreLoading(true);
+    }
+    
     try {
-      const searchData = await searchNews(query);
-      setCategoryNews(searchData.articles || []);
+      const searchData = await searchNews(query, 'en', page);
+      if (append) {
+        setCategoryNews(prev => [...prev, ...(searchData.articles || [])]);
+      } else {
+        setCategoryNews(searchData.articles || []);
+      }
+      
+      // Check if we can load more
+      setCanLoadMore((searchData.articles || []).length >= 10);
     } catch (error) {
       console.error('Failed to search news');
-      setCategoryNews([]);
+      if (!append) {
+        setCategoryNews([]);
+      }
+      setCanLoadMore(false);
     } finally {
-      setSearchLoading(false);
+      if (page === 1) {
+        setSearchLoading(false);
+      } else {
+        setLoadMoreLoading(false);
+      }
+    }
+  };
+
+  const handleLoadMore = () => {
+    const nextPage = currentPage + 1;
+    setCurrentPage(nextPage);
+    
+    if (searchQuery) {
+      handleSearch(searchQuery, nextPage, true);
+    } else {
+      loadCategoryNews(selectedCategory, nextPage, true);
     }
   };
 
@@ -76,6 +131,8 @@ export const HeroSection = () => {
   }, []);
 
   useEffect(() => {
+    setCurrentPage(1);
+    setCanLoadMore(true);
     loadCategoryNews(selectedCategory);
   }, [selectedCategory]);
 
@@ -241,7 +298,11 @@ export const HeroSection = () => {
         {/* Search and News Container */}
         <div className="mt-8">
           <SearchBox 
-            onSearch={handleSearch}
+            onSearch={(query) => {
+              setCurrentPage(1);
+              setCanLoadMore(true);
+              handleSearch(query);
+            }}
             loading={searchLoading}
             placeholder="Search news by topic (e.g., bitcoin, election, NASA)..."
           />
@@ -267,33 +328,49 @@ export const HeroSection = () => {
               {searchQuery ? 'No news found for your search.' : 'No news found for this category.'}
             </p>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {categoryNews.map((article, index) => (
-                <div key={index} className="bg-white p-4 rounded shadow hover:shadow-lg transition-shadow">
-                  <img 
-                    src={article.image} 
-                    alt="news image"
-                    className="w-full h-48 object-cover mb-3 rounded"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg==';
-                    }}
-                  />
-                  <h2 className="text-lg font-bold text-blue-700 mb-2">
-                    <SafeLink href={article.url} className="hover:underline">
-                      {article.title}
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {categoryNews.map((article, index) => (
+                  <div key={index} className="bg-white p-4 rounded shadow hover:shadow-lg transition-shadow">
+                    <img 
+                      src={article.image} 
+                      alt="news image"
+                      className="w-full h-48 object-cover mb-3 rounded"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg==';
+                      }}
+                    />
+                    <h2 className="text-lg font-bold text-blue-700 mb-2">
+                      <SafeLink href={article.url} className="hover:underline">
+                        {article.title}
+                      </SafeLink>
+                    </h2>
+                    <p className="text-gray-700 mb-3">{article.description}</p>
+                    <SafeLink 
+                      href={article.url}
+                      className="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+                    >
+                      Read Full Article
                     </SafeLink>
-                  </h2>
-                  <p className="text-gray-700 mb-3">{article.description}</p>
-                  <SafeLink 
-                    href={article.url}
-                    className="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+                  </div>
+                ))}
+              </div>
+              
+              {/* Load More Button */}
+              {canLoadMore && categoryNews.length > 0 && (
+                <div className="text-center mt-8">
+                  <Button 
+                    onClick={handleLoadMore}
+                    disabled={loadMoreLoading}
+                    variant="outline"
+                    size="lg"
                   >
-                    Read Full Article
-                  </SafeLink>
+                    {loadMoreLoading ? 'Loading...' : 'Load More Articles'}
+                  </Button>
                 </div>
-              ))}
-            </div>
+              )}
+            </>
           )}
         </div>
       </div>

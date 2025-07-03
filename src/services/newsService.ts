@@ -1,4 +1,3 @@
-
 import { apiCache } from '@/utils/apiCache';
 
 const GNEWS_API_KEY = 'fe777c2cfdf243f6e1c4f400c397a7ad';
@@ -69,8 +68,8 @@ const validateArticle = (article: any): NewsArticle | null => {
   };
 };
 
-export const fetchTopHeadlines = async (country: string = 'us', lang: string = 'en'): Promise<NewsResponse> => {
-  const cacheKey = `top-headlines-${country}-${lang}`;
+export const fetchTopHeadlines = async (country: string = 'us', lang: string = 'en', page: number = 1): Promise<NewsResponse> => {
+  const cacheKey = `top-headlines-${country}-${lang}-${page}`;
   
   // Check cache first
   const cachedData = apiCache.get<NewsResponse>(cacheKey);
@@ -81,7 +80,7 @@ export const fetchTopHeadlines = async (country: string = 'us', lang: string = '
 
   try {
     const response = await fetch(
-      `${GNEWS_BASE_URL}/top-headlines?country=${country}&lang=${lang}&token=${GNEWS_API_KEY}`
+      `${GNEWS_BASE_URL}/top-headlines?country=${country}&lang=${lang}&page=${page}&token=${GNEWS_API_KEY}`
     );
     
     if (!response.ok) {
@@ -114,7 +113,7 @@ export const fetchTopHeadlines = async (country: string = 'us', lang: string = '
   }
 };
 
-export const searchNews = async (query: string, lang: string = 'en'): Promise<NewsResponse> => {
+export const searchNews = async (query: string, lang: string = 'en', page: number = 1): Promise<NewsResponse> => {
   try {
     // Sanitize search query
     const sanitizedQuery = sanitizeText(query);
@@ -122,7 +121,7 @@ export const searchNews = async (query: string, lang: string = 'en'): Promise<Ne
       throw new Error('Invalid search query');
     }
 
-    const cacheKey = `search-${sanitizedQuery}-${lang}`;
+    const cacheKey = `search-${sanitizedQuery}-${lang}-${page}`;
     
     // Check cache first
     const cachedData = apiCache.get<NewsResponse>(cacheKey);
@@ -132,7 +131,7 @@ export const searchNews = async (query: string, lang: string = 'en'): Promise<Ne
     }
     
     const response = await fetch(
-      `${GNEWS_BASE_URL}/search?q=${encodeURIComponent(sanitizedQuery)}&lang=${lang}&token=${GNEWS_API_KEY}`
+      `${GNEWS_BASE_URL}/search?q=${encodeURIComponent(sanitizedQuery)}&lang=${lang}&page=${page}&token=${GNEWS_API_KEY}`
     );
     
     if (!response.ok) {
@@ -165,7 +164,7 @@ export const searchNews = async (query: string, lang: string = 'en'): Promise<Ne
   }
 };
 
-export const fetchCategoryNews = async (category: string, country: string = 'us', lang: string = 'en'): Promise<NewsResponse> => {
+export const fetchCategoryNews = async (category: string, country: string = 'us', lang: string = 'en', page: number = 1): Promise<NewsResponse> => {
   try {
     // Validate category input
     const validCategories = ['world', 'nation', 'business', 'technology', 'entertainment', 'sports', 'science', 'health'];
@@ -173,7 +172,7 @@ export const fetchCategoryNews = async (category: string, country: string = 'us'
       throw new Error('Invalid category');
     }
 
-    const cacheKey = `category-${category}-${country}-${lang}`;
+    const cacheKey = `category-${category}-${country}-${lang}-${page}`;
     
     // Check cache first
     const cachedData = apiCache.get<NewsResponse>(cacheKey);
@@ -183,7 +182,7 @@ export const fetchCategoryNews = async (category: string, country: string = 'us'
     }
     
     const response = await fetch(
-      `${GNEWS_BASE_URL}/top-headlines?topic=${category}&country=${country}&lang=${lang}&token=${GNEWS_API_KEY}`
+      `${GNEWS_BASE_URL}/top-headlines?topic=${category}&country=${country}&lang=${lang}&page=${page}&token=${GNEWS_API_KEY}`
     );
     
     if (!response.ok) {
