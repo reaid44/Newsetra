@@ -143,6 +143,15 @@ export const HeroSection = ({ searchQuery = "", onSearchStateChange }: HeroSecti
     loadCategoryNews(selectedCategory);
   }, [selectedCategory]);
 
+  // Add useEffect to handle search query changes
+  useEffect(() => {
+    if (searchQuery) {
+      setCurrentPage(1);
+      setCanLoadMore(true);
+      handleSearch(searchQuery);
+    }
+  }, [searchQuery]);
+
   const formatTimeAgo = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -225,94 +234,100 @@ export const HeroSection = ({ searchQuery = "", onSearchStateChange }: HeroSecti
   return (
     <section className="bg-white border-b">
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <Card className="overflow-hidden hover:shadow-lg transition-shadow">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
-            {/* Category Filter Buttons */}
-            <div className="p-8 lg:p-12 col-span-full">
-              <div className="flex flex-wrap gap-2 mb-4">
-                {CATEGORIES.map((category) => (
-                  <button
-                    key={category.id}
-                    onClick={() => {
-                      setSelectedCategory(category.id);
+        {/* Featured Article Card - only show when not searching */}
+        {!searchQuery && featuredArticle && (
+          <Card className="overflow-hidden hover:shadow-lg transition-shadow mb-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
+              {/* Featured Article */}
+              <div className="aspect-video lg:aspect-auto">
+                {featuredArticle?.image ? (
+                  <img 
+                    src={featuredArticle.image} 
+                    alt="News Image"
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                      target.nextElementSibling?.classList.remove('hidden');
                     }}
-                    className={`px-3 py-1 rounded transition-colors ${
-                      selectedCategory === category.id && !searchQuery
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
-                    }`}
+                  />
+                ) : null}
+                <div className={`aspect-video lg:aspect-auto bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center ${featuredArticle?.image ? 'hidden' : ''}`}>
+                  <div className="text-center text-gray-500">
+                    <div className="w-24 h-24 mx-auto mb-4 bg-blue-300 rounded-lg flex items-center justify-center">
+                      <span className="text-2xl">📰</span>
+                    </div>
+                    <p>Featured News</p>
+                  </div>
+                </div>
+              </div>
+              <div className="p-8 lg:p-12">
+                <div className="flex items-center space-x-2 mb-4">
+                  <Badge variant="secondary" className="bg-red-100 text-red-700">Breaking</Badge>
+                  <Badge variant="outline">{featuredArticle?.source.name}</Badge>
+                </div>
+                <h2 className="text-xl font-semibold text-blue-700 hover:underline mb-4">
+                  <SafeLink href={featuredArticle?.url}>
+                    {featuredArticle?.title}
+                  </SafeLink>
+                </h2>
+                <p className="text-gray-700 mt-2 mb-3">
+                  {featuredArticle?.description}
+                </p>
+                <div className="flex items-center space-x-4">
+                  <SafeLink 
+                    href={featuredArticle?.url}
+                    className="inline-block text-sm text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded"
                   >
-                    {category.label}
-                  </button>
-                ))}
-              </div>
-              
-              {searchQuery && (
-                <div className="mb-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">
-                      Search results for: <strong>"{searchQuery}"</strong>
-                    </span>
+                    Read Full Article
+                  </SafeLink>
+                  <div className="text-sm text-gray-500">
+                    <span>By {featuredArticle?.source.name}</span>
+                    <span className="mx-2">•</span>
+                    <span>{featuredArticle && formatTimeAgo(featuredArticle.publishedAt)}</span>
                   </div>
                 </div>
-              )}
+              </div>
             </div>
+          </Card>
+        )}
 
-            {/* Featured Article */}
-            <div className="aspect-video lg:aspect-auto">
-              {featuredArticle?.image ? (
-                <img 
-                  src={featuredArticle.image} 
-                  alt="News Image"
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.style.display = 'none';
-                    target.nextElementSibling?.classList.remove('hidden');
+        {/* Category Filter Buttons - only show when not searching */}
+        {!searchQuery && (
+          <div className="mb-8">
+            <div className="flex flex-wrap gap-2 mb-4">
+              {CATEGORIES.map((category) => (
+                <button
+                  key={category.id}
+                  onClick={() => {
+                    setSelectedCategory(category.id);
                   }}
-                />
-              ) : null}
-              <div className={`aspect-video lg:aspect-auto bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center ${featuredArticle?.image ? 'hidden' : ''}`}>
-                <div className="text-center text-gray-500">
-                  <div className="w-24 h-24 mx-auto mb-4 bg-blue-300 rounded-lg flex items-center justify-center">
-                    <span className="text-2xl">📰</span>
-                  </div>
-                  <p>Featured News</p>
-                </div>
-              </div>
-            </div>
-            <div className="p-8 lg:p-12">
-              <div className="flex items-center space-x-2 mb-4">
-                <Badge variant="secondary" className="bg-red-100 text-red-700">Breaking</Badge>
-                <Badge variant="outline">{featuredArticle?.source.name}</Badge>
-              </div>
-              <h2 className="text-xl font-semibold text-blue-700 hover:underline mb-4">
-                <SafeLink href={featuredArticle?.url}>
-                  {featuredArticle?.title}
-                </SafeLink>
-              </h2>
-              <p className="text-gray-700 mt-2 mb-3">
-                {featuredArticle?.description}
-              </p>
-              <div className="flex items-center space-x-4">
-                <SafeLink 
-                  href={featuredArticle?.url}
-                  className="inline-block text-sm text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded"
+                  className={`px-3 py-1 rounded transition-colors ${
+                    selectedCategory === category.id
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+                  }`}
                 >
-                  Read Full Article
-                </SafeLink>
-                <div className="text-sm text-gray-500">
-                  <span>By {featuredArticle?.source.name}</span>
-                  <span className="mx-2">•</span>
-                  <span>{featuredArticle && formatTimeAgo(featuredArticle.publishedAt)}</span>
-                </div>
-              </div>
+                  {category.label}
+                </button>
+              ))}
             </div>
           </div>
-        </Card>
+        )}
+
+        {/* Search Results Header */}
+        {searchQuery && (
+          <div className="mb-6">
+            <div className="flex items-center justify-between">
+              <span className="text-lg text-gray-600">
+                Search results for: <strong>"{searchQuery}"</strong>
+              </span>
+            </div>
+          </div>
+        )}
 
         {/* News Container */}
-        <div className="mt-8">
+        <div>
           <h3 className="text-2xl font-bold text-gray-900 mb-6 capitalize">
             {searchQuery ? `Search Results for "${searchQuery}"` : `${selectedCategory} News`}
           </h3>
@@ -353,6 +368,10 @@ export const HeroSection = ({ searchQuery = "", onSearchStateChange }: HeroSecti
                       </SafeLink>
                     </h2>
                     <p className="text-gray-700 mb-3">{article.description}</p>
+                    <div className="flex items-center justify-between text-sm text-gray-500 mb-3">
+                      <span>{article.source.name}</span>
+                      <span>{formatTimeAgo(article.publishedAt)}</span>
+                    </div>
                     <SafeLink 
                       href={article.url}
                       className="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
