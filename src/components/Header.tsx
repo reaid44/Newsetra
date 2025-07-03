@@ -67,15 +67,6 @@ export const Header = ({ onSearch, onClearSearch, searchQuery = "", searchLoadin
             </div>
           </div>
           
-          <nav className="hidden lg:flex items-center space-x-8">
-            <a href="#" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">Home</a>
-            <a href="#" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">Politics</a>
-            <a href="#" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">Business</a>
-            <a href="#" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">Sports</a>
-            <a href="#" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">Opinion</a>
-            <a href="#" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">Local</a>
-          </nav>
-          
           <div className="flex items-center space-x-4">
             <div className="relative hidden md:block">
               <form onSubmit={handleSearch} className="relative">
