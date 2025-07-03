@@ -3,7 +3,6 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { fetchTopHeadlines, fetchCategoryNews, searchNews, NewsArticle } from "@/services/newsService";
-import { SearchBox } from "@/components/SearchBox";
 
 const CATEGORIES = [
   { id: 'world', label: 'World' },
@@ -16,13 +15,17 @@ const CATEGORIES = [
   { id: 'health', label: 'Health' }
 ];
 
-export const HeroSection = () => {
+interface HeroSectionProps {
+  searchQuery?: string;
+  onSearchStateChange?: (query: string, loading: boolean) => void;
+}
+
+export const HeroSection = ({ searchQuery = "", onSearchStateChange }: HeroSectionProps) => {
   const [featuredArticle, setFeaturedArticle] = useState<NewsArticle | null>(null);
   const [categoryNews, setCategoryNews] = useState<NewsArticle[]>([]);
   const [selectedCategory, setSelectedCategory] = useState('world');
   const [loading, setLoading] = useState(true);
   const [categoryLoading, setCategoryLoading] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
   const [searchLoading, setSearchLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [loadMoreLoading, setLoadMoreLoading] = useState(false);
@@ -61,8 +64,6 @@ export const HeroSection = () => {
   };
 
   const handleSearch = async (query: string, page: number = 1, append: boolean = false) => {
-    setSearchQuery(query);
-    
     if (!query.trim()) {
       // If search is cleared, reload category news
       setCurrentPage(1);
@@ -73,6 +74,9 @@ export const HeroSection = () => {
 
     if (page === 1) {
       setSearchLoading(true);
+      if (onSearchStateChange) {
+        onSearchStateChange(query, true);
+      }
     } else {
       setLoadMoreLoading(true);
     }
@@ -96,6 +100,9 @@ export const HeroSection = () => {
     } finally {
       if (page === 1) {
         setSearchLoading(false);
+        if (onSearchStateChange) {
+          onSearchStateChange(query, false);
+        }
       } else {
         setLoadMoreLoading(false);
       }
@@ -228,10 +235,9 @@ export const HeroSection = () => {
                     key={category.id}
                     onClick={() => {
                       setSelectedCategory(category.id);
-                      setSearchQuery(''); // Clear search when changing category
                     }}
                     className={`px-3 py-1 rounded transition-colors ${
-                      selectedCategory === category.id
+                      selectedCategory === category.id && !searchQuery
                         ? 'bg-blue-600 text-white'
                         : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
                     }`}
@@ -240,6 +246,16 @@ export const HeroSection = () => {
                   </button>
                 ))}
               </div>
+              
+              {searchQuery && (
+                <div className="mb-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600">
+                      Search results for: <strong>"{searchQuery}"</strong>
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Featured Article */}
@@ -295,18 +311,8 @@ export const HeroSection = () => {
           </div>
         </Card>
 
-        {/* Search and News Container */}
+        {/* News Container */}
         <div className="mt-8">
-          <SearchBox 
-            onSearch={(query) => {
-              setCurrentPage(1);
-              setCanLoadMore(true);
-              handleSearch(query);
-            }}
-            loading={searchLoading}
-            placeholder="Search news by topic (e.g., bitcoin, election, NASA)..."
-          />
-          
           <h3 className="text-2xl font-bold text-gray-900 mb-6 capitalize">
             {searchQuery ? `Search Results for "${searchQuery}"` : `${selectedCategory} News`}
           </h3>

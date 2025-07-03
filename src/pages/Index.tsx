@@ -1,25 +1,43 @@
 
+import { useState } from "react";
 import { Header } from "@/components/Header";
 import { HeroSection } from "@/components/HeroSection";
 import { NewsGrid } from "@/components/NewsGrid";
-import { Sidebar } from "@/components/Sidebar";
 import { Footer } from "@/components/Footer";
+import { saveRecentSearch } from "@/utils/recentSearches";
 
 const Index = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchLoading, setSearchLoading] = useState(false);
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    saveRecentSearch(query);
+  };
+
+  const handleClearSearch = () => {
+    setSearchQuery("");
+  };
+
+  const handleSearchStateChange = (query: string, loading: boolean) => {
+    setSearchLoading(loading);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
-      <HeroSection />
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
-            <NewsGrid />
-          </div>
-          <div className="lg:col-span-1">
-            <Sidebar />
-          </div>
-        </div>
-      </div>
+      <Header 
+        onSearch={handleSearch}
+        onClearSearch={handleClearSearch}
+        searchQuery={searchQuery}
+        searchLoading={searchLoading}
+      />
+      <main>
+        <HeroSection 
+          searchQuery={searchQuery}
+          onSearchStateChange={handleSearchStateChange}
+        />
+        {!searchQuery && <NewsGrid />}
+      </main>
       <Footer />
     </div>
   );

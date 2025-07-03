@@ -1,9 +1,33 @@
 
-import { Menu, Search, User } from "lucide-react";
+import { Menu, Search, User, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useState } from "react";
 
-export const Header = () => {
+interface HeaderProps {
+  onSearch?: (query: string) => void;
+  onClearSearch?: () => void;
+  searchQuery?: string;
+  searchLoading?: boolean;
+}
+
+export const Header = ({ onSearch, onClearSearch, searchQuery = "", searchLoading = false }: HeaderProps) => {
+  const [localQuery, setLocalQuery] = useState(searchQuery);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (onSearch && localQuery.trim()) {
+      onSearch(localQuery.trim());
+    }
+  };
+
+  const handleClear = () => {
+    setLocalQuery("");
+    if (onClearSearch) {
+      onClearSearch();
+    }
+  };
+
   return (
     <header className="bg-white shadow-sm border-b">
       <div className="max-w-7xl mx-auto px-4">
@@ -30,14 +54,28 @@ export const Header = () => {
           </nav>
           
           <div className="flex items-center space-x-4">
-            <div className="relative hidden md:block">
+            <form onSubmit={handleSearch} className="relative hidden md:block">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input 
                 type="text" 
-                placeholder="Search news..." 
-                className="pl-10 w-64"
+                placeholder={searchLoading ? "Searching..." : "Search news..."} 
+                className="pl-10 w-64 pr-10"
+                value={localQuery}
+                onChange={(e) => setLocalQuery(e.target.value)}
+                disabled={searchLoading}
               />
-            </div>
+              {localQuery && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleClear}
+                  className="absolute right-1 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0 hover:bg-gray-100"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              )}
+            </form>
             <Button variant="ghost" size="sm">
               <User className="h-5 w-5" />
             </Button>
