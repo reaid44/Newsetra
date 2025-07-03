@@ -1,4 +1,6 @@
 
+import { apiCache } from '@/utils/apiCache';
+
 const GNEWS_API_KEY = 'fe777c2cfdf243f6e1c4f400c397a7ad';
 const GNEWS_BASE_URL = 'https://gnews.io/api/v4';
 
@@ -68,6 +70,15 @@ const validateArticle = (article: any): NewsArticle | null => {
 };
 
 export const fetchTopHeadlines = async (country: string = 'us', lang: string = 'en'): Promise<NewsResponse> => {
+  const cacheKey = `top-headlines-${country}-${lang}`;
+  
+  // Check cache first
+  const cachedData = apiCache.get<NewsResponse>(cacheKey);
+  if (cachedData) {
+    console.log('Using cached top headlines data');
+    return cachedData;
+  }
+
   try {
     const response = await fetch(
       `${GNEWS_BASE_URL}/top-headlines?country=${country}&lang=${lang}&token=${GNEWS_API_KEY}`
@@ -84,10 +95,16 @@ export const fetchTopHeadlines = async (country: string = 'us', lang: string = '
       .map(validateArticle)
       .filter((article): article is NewsArticle => article !== null);
     
-    return {
+    const result = {
       totalArticles: validatedArticles.length,
       articles: validatedArticles
     };
+
+    // Cache the result
+    apiCache.set(cacheKey, result);
+    console.log('Cached top headlines data');
+    
+    return result;
   } catch (error) {
     console.error('Error fetching news:', error);
     return {
@@ -103,6 +120,15 @@ export const searchNews = async (query: string, lang: string = 'en'): Promise<Ne
     const sanitizedQuery = sanitizeText(query);
     if (!sanitizedQuery) {
       throw new Error('Invalid search query');
+    }
+
+    const cacheKey = `search-${sanitizedQuery}-${lang}`;
+    
+    // Check cache first
+    const cachedData = apiCache.get<NewsResponse>(cacheKey);
+    if (cachedData) {
+      console.log('Using cached search data for:', sanitizedQuery);
+      return cachedData;
     }
     
     const response = await fetch(
@@ -120,10 +146,16 @@ export const searchNews = async (query: string, lang: string = 'en'): Promise<Ne
       .map(validateArticle)
       .filter((article): article is NewsArticle => article !== null);
     
-    return {
+    const result = {
       totalArticles: validatedArticles.length,
       articles: validatedArticles
     };
+
+    // Cache the result
+    apiCache.set(cacheKey, result);
+    console.log('Cached search data for:', sanitizedQuery);
+    
+    return result;
   } catch (error) {
     console.error('Error searching news:', error);
     return {
@@ -139,6 +171,15 @@ export const fetchCategoryNews = async (category: string, country: string = 'us'
     const validCategories = ['world', 'nation', 'business', 'technology', 'entertainment', 'sports', 'science', 'health'];
     if (!validCategories.includes(category)) {
       throw new Error('Invalid category');
+    }
+
+    const cacheKey = `category-${category}-${country}-${lang}`;
+    
+    // Check cache first
+    const cachedData = apiCache.get<NewsResponse>(cacheKey);
+    if (cachedData) {
+      console.log('Using cached category data for:', category);
+      return cachedData;
     }
     
     const response = await fetch(
@@ -156,10 +197,16 @@ export const fetchCategoryNews = async (category: string, country: string = 'us'
       .map(validateArticle)
       .filter((article): article is NewsArticle => article !== null);
     
-    return {
+    const result = {
       totalArticles: validatedArticles.length,
       articles: validatedArticles
     };
+
+    // Cache the result
+    apiCache.set(cacheKey, result);
+    console.log('Cached category data for:', category);
+    
+    return result;
   } catch (error) {
     console.error('Error fetching category news:', error);
     return {

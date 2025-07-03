@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { fetchTopHeadlines, fetchCategoryNews, NewsArticle } from "@/services/newsService";
+import { fetchTopHeadlines, fetchCategoryNews, searchNews, NewsArticle } from "@/services/newsService";
+import { SearchBox } from "@/components/SearchBox";
 
 const CATEGORIES = [
   { id: 'world', label: 'World' },
@@ -20,6 +21,8 @@ export const HeroSection = () => {
   const [selectedCategory, setSelectedCategory] = useState('world');
   const [loading, setLoading] = useState(true);
   const [categoryLoading, setCategoryLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchLoading, setSearchLoading] = useState(false);
 
   const loadCategoryNews = async (category: string) => {
     setCategoryLoading(true);
@@ -31,6 +34,27 @@ export const HeroSection = () => {
       setCategoryNews([]);
     } finally {
       setCategoryLoading(false);
+    }
+  };
+
+  const handleSearch = async (query: string) => {
+    setSearchQuery(query);
+    
+    if (!query.trim()) {
+      // If search is cleared, reload category news
+      loadCategoryNews(selectedCategory);
+      return;
+    }
+
+    setSearchLoading(true);
+    try {
+      const searchData = await searchNews(query);
+      setCategoryNews(searchData.articles || []);
+    } catch (error) {
+      console.error('Failed to search news');
+      setCategoryNews([]);
+    } finally {
+      setSearchLoading(false);
     }
   };
 
@@ -145,7 +169,10 @@ export const HeroSection = () => {
                 {CATEGORIES.map((category) => (
                   <button
                     key={category.id}
-                    onClick={() => setSelectedCategory(category.id)}
+                    onClick={() => {
+                      setSelectedCategory(category.id);
+                      setSearchQuery(''); // Clear search when changing category
+                    }}
                     className={`px-3 py-1 rounded transition-colors ${
                       selectedCategory === category.id
                         ? 'bg-blue-600 text-white'
@@ -211,13 +238,19 @@ export const HeroSection = () => {
           </div>
         </Card>
 
-        {/* News Container */}
+        {/* Search and News Container */}
         <div className="mt-8">
+          <SearchBox 
+            onSearch={handleSearch}
+            loading={searchLoading}
+            placeholder="Search news by topic (e.g., bitcoin, election, NASA)..."
+          />
+          
           <h3 className="text-2xl font-bold text-gray-900 mb-6 capitalize">
-            {selectedCategory} News
+            {searchQuery ? `Search Results for "${searchQuery}"` : `${selectedCategory} News`}
           </h3>
           
-          {categoryLoading ? (
+          {(categoryLoading || searchLoading) ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {[1, 2, 3, 4, 5, 6].map((i) => (
                 <div key={i} className="bg-white p-4 rounded shadow">
@@ -230,7 +263,9 @@ export const HeroSection = () => {
               ))}
             </div>
           ) : categoryNews.length === 0 ? (
-            <p className="text-gray-500">No news found for this category.</p>
+            <p className="text-gray-500">
+              {searchQuery ? 'No news found for your search.' : 'No news found for this category.'}
+            </p>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {categoryNews.map((article, index) => (
