@@ -7,6 +7,7 @@ import { fetchTopHeadlines, fetchCategoryNews, searchNews, NewsArticle } from "@
 const CATEGORIES = [
   { id: 'world', label: 'World' },
   { id: 'nation', label: 'Nation' },
+  { id: 'politics', label: 'Politics' },
   { id: 'business', label: 'Business' },
   { id: 'technology', label: 'Technology' },
   { id: 'entertainment', label: 'Entertainment' },

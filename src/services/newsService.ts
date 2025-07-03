@@ -167,7 +167,7 @@ export const searchNews = async (query: string, lang: string = 'en', page: numbe
 export const fetchCategoryNews = async (category: string, country: string = 'us', lang: string = 'en', page: number = 1): Promise<NewsResponse> => {
   try {
     // Validate category input
-    const validCategories = ['world', 'nation', 'business', 'technology', 'entertainment', 'sports', 'science', 'health'];
+    const validCategories = ['world', 'nation', 'politics', 'business', 'technology', 'entertainment', 'sports', 'science', 'health'];
     if (!validCategories.includes(category)) {
       throw new Error('Invalid category');
     }
