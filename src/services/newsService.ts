@@ -1,5 +1,5 @@
 
-const GNEWS_API_KEY = '624fbad2d8a96915c2a76a907169c4fe';
+const GNEWS_API_KEY = 'fe777c2cfdf243f6e1c4f400c397a7ad';
 const GNEWS_BASE_URL = 'https://gnews.io/api/v4';
 
 export interface NewsArticle {
