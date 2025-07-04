@@ -85,9 +85,9 @@ export const Header = ({
             </Button>
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold text-sm">MT</span>
+                <span className="text-white font-bold text-sm">N</span>
               </div>
-              <h1 className="text-xl font-bold text-gray-900">Magnolia Tribune</h1>
+              <h1 className="text-xl font-bold text-gray-900">Newsetra</h1>
             </div>
           </div>
           

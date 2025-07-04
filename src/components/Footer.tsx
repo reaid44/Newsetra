@@ -1,4 +1,3 @@
-
 import { Facebook, Twitter, Instagram, Mail, Phone, MapPin } from "lucide-react";
 
 export const Footer = () => {
@@ -9,12 +8,12 @@ export const Footer = () => {
           <div>
             <div className="flex items-center space-x-2 mb-4">
               <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold text-sm">MT</span>
+                <span className="text-white font-bold text-sm">N</span>
               </div>
-              <h3 className="text-xl font-bold">Magnolia Tribune</h3>
+              <h3 className="text-xl font-bold">Newsetra</h3>
             </div>
             <p className="text-gray-400 mb-4">
-              Your trusted source for local news, politics, and community updates.
+              Your trusted source for smart daily news and community updates.
             </p>
             <div className="flex space-x-4">
               <Facebook className="w-5 h-5 text-gray-400 hover:text-blue-400 cursor-pointer transition-colors" />
@@ -58,7 +57,7 @@ export const Footer = () => {
               </div>
               <div className="flex items-center space-x-2 text-gray-400">
                 <Mail className="w-4 h-4" />
-                <span className="text-sm">news@magnoliatribune.com</span>
+                <span className="text-sm">news@newsetra.com</span>
               </div>
             </div>
           </div>
@@ -66,7 +65,7 @@ export const Footer = () => {
         
         <div className="border-t border-gray-800 mt-8 pt-8 text-center">
           <p className="text-gray-400">
-            © 2024 Magnolia Tribune. All rights reserved.
+            © 2024 Newsetra. All rights reserved.
           </p>
         </div>
       </div>
