@@ -8,13 +8,31 @@ import { RecentSearches } from "@/components/RecentSearches";
 interface HeaderProps {
   onSearch?: (query: string) => void;
   onClearSearch?: () => void;
+  onCategorySelect?: (category: string) => void;
   searchQuery?: string;
   searchLoading?: boolean;
+  activeCategory?: string;
 }
 
-export const Header = ({ onSearch, onClearSearch, searchQuery = "", searchLoading = false }: HeaderProps) => {
+export const Header = ({ 
+  onSearch, 
+  onClearSearch, 
+  onCategorySelect,
+  searchQuery = "", 
+  searchLoading = false,
+  activeCategory = "world"
+}: HeaderProps) => {
   const [localQuery, setLocalQuery] = useState(searchQuery);
   const [showRecentSearches, setShowRecentSearches] = useState(false);
+
+  const navCategories = [
+    { id: 'general', label: 'Home' },
+    { id: 'politics', label: 'Politics' },
+    { id: 'business', label: 'Business' },
+    { id: 'sports', label: 'Sports' },
+    { id: 'general', label: 'Opinion' }, // GNews doesn't have opinion, use general
+    { id: 'general', label: 'Local' } // GNews doesn't have local, use general
+  ];
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,6 +69,12 @@ export const Header = ({ onSearch, onClearSearch, searchQuery = "", searchLoadin
     setShowRecentSearches(false);
   };
 
+  const handleCategoryClick = (categoryId: string) => {
+    if (onCategorySelect) {
+      onCategorySelect(categoryId);
+    }
+  };
+
   return (
     <header className="bg-white shadow-sm border-b">
       <div className="max-w-7xl mx-auto px-4">
@@ -68,12 +92,19 @@ export const Header = ({ onSearch, onClearSearch, searchQuery = "", searchLoadin
           </div>
           
           <nav className="hidden lg:flex items-center space-x-8">
-            <a href="#" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">Home</a>
-            <a href="#" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">Politics</a>
-            <a href="#" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">Business</a>
-            <a href="#" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">Sports</a>
-            <a href="#" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">Opinion</a>
-            <a href="#" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">Local</a>
+            {navCategories.map((category) => (
+              <button
+                key={category.label}
+                onClick={() => handleCategoryClick(category.id)}
+                className={`font-medium transition-colors ${
+                  activeCategory === category.id
+                    ? 'text-blue-600 border-b-2 border-blue-600 pb-1'
+                    : 'text-gray-700 hover:text-blue-600'
+                }`}
+              >
+                {category.label}
+              </button>
+            ))}
           </nav>
           
           <div className="flex items-center space-x-4">

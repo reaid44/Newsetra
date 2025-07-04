@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -19,18 +20,30 @@ const CATEGORIES = [
 interface HeroSectionProps {
   searchQuery?: string;
   onSearchStateChange?: (query: string, loading: boolean) => void;
+  selectedCategory?: string;
 }
 
-export const HeroSection = ({ searchQuery = "", onSearchStateChange }: HeroSectionProps) => {
+export const HeroSection = ({ 
+  searchQuery = "", 
+  onSearchStateChange,
+  selectedCategory = "world"
+}: HeroSectionProps) => {
   const [featuredArticle, setFeaturedArticle] = useState<NewsArticle | null>(null);
   const [categoryNews, setCategoryNews] = useState<NewsArticle[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState('world');
+  const [currentCategory, setCurrentCategory] = useState(selectedCategory);
   const [loading, setLoading] = useState(true);
   const [categoryLoading, setCategoryLoading] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [loadMoreLoading, setLoadMoreLoading] = useState(false);
   const [canLoadMore, setCanLoadMore] = useState(true);
+
+  // Update current category when selectedCategory prop changes
+  useEffect(() => {
+    if (selectedCategory !== currentCategory) {
+      setCurrentCategory(selectedCategory);
+    }
+  }, [selectedCategory]);
 
   const loadCategoryNews = async (category: string, page: number = 1, append: boolean = false) => {
     if (page === 1) {
@@ -141,8 +154,8 @@ export const HeroSection = ({ searchQuery = "", onSearchStateChange }: HeroSecti
   useEffect(() => {
     setCurrentPage(1);
     setCanLoadMore(true);
-    loadCategoryNews(selectedCategory);
-  }, [selectedCategory]);
+    loadCategoryNews(currentCategory);
+  }, [currentCategory]);
 
   // Add useEffect to handle search query changes
   useEffect(() => {
@@ -301,10 +314,10 @@ export const HeroSection = ({ searchQuery = "", onSearchStateChange }: HeroSecti
                 <button
                   key={category.id}
                   onClick={() => {
-                    setSelectedCategory(category.id);
+                    setCurrentCategory(category.id);
                   }}
                   className={`px-3 py-1 rounded transition-colors ${
-                    selectedCategory === category.id
+                    currentCategory === category.id
                       ? 'bg-blue-600 text-white'
                       : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
                   }`}
@@ -330,7 +343,7 @@ export const HeroSection = ({ searchQuery = "", onSearchStateChange }: HeroSecti
         {/* News Container */}
         <div>
           <h3 className="text-2xl font-bold text-gray-900 mb-6 capitalize">
-            {searchQuery ? `Search Results for "${searchQuery}"` : `${selectedCategory} News`}
+            {searchQuery ? `Search Results for "${searchQuery}"` : `${currentCategory} News`}
           </h3>
           
           {(categoryLoading || searchLoading) ? (

@@ -9,6 +9,7 @@ import { saveRecentSearch } from "@/utils/recentSearches";
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchLoading, setSearchLoading] = useState(false);
+  const [activeCategory, setActiveCategory] = useState("world");
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -23,18 +24,26 @@ const Index = () => {
     setSearchLoading(loading);
   };
 
+  const handleCategorySelect = (category: string) => {
+    setActiveCategory(category);
+    setSearchQuery(""); // Clear search when selecting category
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header 
         onSearch={handleSearch}
         onClearSearch={handleClearSearch}
+        onCategorySelect={handleCategorySelect}
         searchQuery={searchQuery}
         searchLoading={searchLoading}
+        activeCategory={activeCategory}
       />
       <main>
         <HeroSection 
           searchQuery={searchQuery}
           onSearchStateChange={handleSearchStateChange}
+          selectedCategory={activeCategory}
         />
         {!searchQuery && <NewsGrid />}
       </main>
