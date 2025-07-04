@@ -1,6 +1,13 @@
+
 import { apiCache } from '@/utils/apiCache';
 
-const GNEWS_API_KEY = 'fe777c2cfdf243f6e1c4f400c397a7ad';
+const GNEWS_API_KEYS = [
+  'fe777c2cfdf243f6e1c4f400c397a7ad',
+  '624fbad2d8a96915c2a76a907169c4fe'
+];
+
+let currentKeyIndex = 0;
+
 const GNEWS_BASE_URL = 'https://gnews.io/api/v4';
 
 export interface NewsArticle {
@@ -20,6 +27,56 @@ export interface NewsResponse {
   totalArticles: number;
   articles: NewsArticle[];
 }
+
+// Function to get current API key
+const getCurrentApiKey = (): string => {
+  return GNEWS_API_KEYS[currentKeyIndex];
+};
+
+// Function to switch to next API key
+const switchToNextApiKey = (): void => {
+  currentKeyIndex = (currentKeyIndex + 1) % GNEWS_API_KEYS.length;
+  console.log(`Switched to API key ${currentKeyIndex + 1}`);
+};
+
+// Function to check if response indicates rate limit
+const isRateLimited = (response: Response): boolean => {
+  return response.status === 429 || response.status === 403;
+};
+
+// Generic fetch function with automatic key switching
+const fetchWithKeyRotation = async (url: string): Promise<Response> => {
+  let lastError: Error | null = null;
+  
+  // Try all available keys
+  for (let attempt = 0; attempt < GNEWS_API_KEYS.length; attempt++) {
+    try {
+      const apiKey = getCurrentApiKey();
+      const fullUrl = `${url}&token=${apiKey}`;
+      
+      console.log(`Making request with API key ${currentKeyIndex + 1}`);
+      const response = await fetch(fullUrl);
+      
+      if (isRateLimited(response)) {
+        console.log(`API key ${currentKeyIndex + 1} rate limited, switching keys`);
+        switchToNextApiKey();
+        continue;
+      }
+      
+      if (response.ok) {
+        return response;
+      }
+      
+      throw new Error(`API request failed with status: ${response.status}`);
+    } catch (error) {
+      lastError = error as Error;
+      console.error(`Error with API key ${currentKeyIndex + 1}:`, error);
+      switchToNextApiKey();
+    }
+  }
+  
+  throw lastError || new Error('All API keys failed');
+};
 
 // Input validation functions
 const isValidUrl = (url: string): boolean => {
@@ -79,13 +136,8 @@ export const fetchTopHeadlines = async (country: string = 'us', lang: string = '
   }
 
   try {
-    const response = await fetch(
-      `${GNEWS_BASE_URL}/top-headlines?country=${country}&lang=${lang}&page=${page}&token=${GNEWS_API_KEY}`
-    );
-    
-    if (!response.ok) {
-      throw new Error('Failed to fetch news');
-    }
+    const url = `${GNEWS_BASE_URL}/top-headlines?country=${country}&lang=${lang}&page=${page}`;
+    const response = await fetchWithKeyRotation(url);
     
     const data = await response.json();
     
@@ -130,13 +182,8 @@ export const searchNews = async (query: string, lang: string = 'en', page: numbe
       return cachedData;
     }
     
-    const response = await fetch(
-      `${GNEWS_BASE_URL}/search?q=${encodeURIComponent(sanitizedQuery)}&lang=${lang}&page=${page}&token=${GNEWS_API_KEY}`
-    );
-    
-    if (!response.ok) {
-      throw new Error('Failed to search news');
-    }
+    const url = `${GNEWS_BASE_URL}/search?q=${encodeURIComponent(sanitizedQuery)}&lang=${lang}&page=${page}`;
+    const response = await fetchWithKeyRotation(url);
     
     const data = await response.json();
     
@@ -181,13 +228,8 @@ export const fetchCategoryNews = async (category: string, country: string = 'us'
       return cachedData;
     }
     
-    const response = await fetch(
-      `${GNEWS_BASE_URL}/top-headlines?topic=${category}&country=${country}&lang=${lang}&page=${page}&token=${GNEWS_API_KEY}`
-    );
-    
-    if (!response.ok) {
-      throw new Error('Failed to fetch category news');
-    }
+    const url = `${GNEWS_BASE_URL}/top-headlines?topic=${category}&country=${country}&lang=${lang}&page=${page}`;
+    const response = await fetchWithKeyRotation(url);
     
     const data = await response.json();
     
