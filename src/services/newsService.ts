@@ -1,4 +1,3 @@
-
 import { apiCache } from '@/utils/apiCache';
 
 const GNEWS_API_KEYS = [
@@ -27,6 +26,24 @@ export interface NewsResponse {
   totalArticles: number;
   articles: NewsArticle[];
 }
+
+// Function to normalize category names for GNews API
+const normalizeCategoryForAPI = (category: string): string => {
+  const categoryMap: { [key: string]: string } = {
+    'general': 'general',
+    'nation': 'nation',
+    'politics': 'politics',
+    'business': 'business',
+    'technology': 'technology',
+    'entertainment': 'entertainment',
+    'sports': 'sports',
+    'science': 'science',
+    'health': 'health',
+    'world': 'world'
+  };
+  
+  return categoryMap[category] || 'general';
+};
 
 // Function to get current API key
 const getCurrentApiKey = (): string => {
@@ -213,10 +230,16 @@ export const searchNews = async (query: string, lang: string = 'en', page: numbe
 
 export const fetchCategoryNews = async (category: string, country: string = 'us', lang: string = 'en', page: number = 1): Promise<NewsResponse> => {
   try {
+    // Normalize the category before validation
+    const normalizedCategory = normalizeCategoryForAPI(category);
+    
     // Validate category input
-    const validCategories = ['world', 'nation', 'politics', 'business', 'technology', 'entertainment', 'sports', 'science', 'health'];
-    if (!validCategories.includes(category)) {
-      throw new Error('Invalid category');
+    const validCategories = ['world', 'nation', 'politics', 'business', 'technology', 'entertainment', 'sports', 'science', 'health', 'general'];
+    if (!validCategories.includes(normalizedCategory)) {
+      console.warn(`Invalid category: ${category}, falling back to general`);
+      category = 'general';
+    } else {
+      category = normalizedCategory;
     }
 
     const cacheKey = `category-${category}-${country}-${lang}-${page}`;

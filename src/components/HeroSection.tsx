@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -6,13 +5,14 @@ import { Button } from "@/components/ui/button";
 import { fetchTopHeadlines, fetchCategoryNews, searchNews, NewsArticle } from "@/services/newsService";
 
 const CATEGORIES = [
-  { id: 'world', label: 'World' },
-  { id: 'nation', label: 'Nation' },
+  { id: 'general', label: 'Home' },
   { id: 'politics', label: 'Politics' },
   { id: 'business', label: 'Business' },
+  { id: 'sports', label: 'Sports' },
+  { id: 'nation', label: 'Opinion' },
+  { id: 'nation', label: 'Local' },
   { id: 'technology', label: 'Technology' },
   { id: 'entertainment', label: 'Entertainment' },
-  { id: 'sports', label: 'Sports' },
   { id: 'science', label: 'Science' },
   { id: 'health', label: 'Health' }
 ];
@@ -26,7 +26,7 @@ interface HeroSectionProps {
 export const HeroSection = ({ 
   searchQuery = "", 
   onSearchStateChange,
-  selectedCategory = "world"
+  selectedCategory = "general"
 }: HeroSectionProps) => {
   const [featuredArticle, setFeaturedArticle] = useState<NewsArticle | null>(null);
   const [categoryNews, setCategoryNews] = useState<NewsArticle[]>([]);
@@ -310,9 +310,9 @@ export const HeroSection = ({
         {!searchQuery && (
           <div className="mb-8">
             <div className="flex flex-wrap gap-2 mb-4">
-              {CATEGORIES.map((category) => (
+              {CATEGORIES.map((category, index) => (
                 <button
-                  key={category.id}
+                  key={`${category.id}-${index}`}
                   onClick={() => {
                     setCurrentCategory(category.id);
                   }}

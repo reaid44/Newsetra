@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Header } from "@/components/Header";
 import { HeroSection } from "@/components/HeroSection";
@@ -9,7 +8,7 @@ import { saveRecentSearch } from "@/utils/recentSearches";
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchLoading, setSearchLoading] = useState(false);
-  const [activeCategory, setActiveCategory] = useState("world");
+  const [activeCategory, setActiveCategory] = useState("general");
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);

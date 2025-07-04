@@ -30,8 +30,8 @@ export const Header = ({
     { id: 'politics', label: 'Politics' },
     { id: 'business', label: 'Business' },
     { id: 'sports', label: 'Sports' },
-    { id: 'general', label: 'Opinion' }, // GNews doesn't have opinion, use general
-    { id: 'general', label: 'Local' } // GNews doesn't have local, use general
+    { id: 'nation', label: 'Opinion' },
+    { id: 'nation', label: 'Local' }
   ];
 
   const handleSearch = (e: React.FormEvent) => {
@@ -92,9 +92,9 @@ export const Header = ({
           </div>
           
           <nav className="hidden lg:flex items-center space-x-8">
-            {navCategories.map((category) => (
+            {navCategories.map((category, index) => (
               <button
-                key={category.label}
+                key={`${category.id}-${index}`}
                 onClick={() => handleCategoryClick(category.id)}
                 className={`font-medium transition-colors ${
                   activeCategory === category.id
