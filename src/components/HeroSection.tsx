@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { fetchTopHeadlines, fetchCategoryNews, searchNews, NewsArticle } from "@/services/newsService";
-import { Fire } from "lucide-react";
+import { Flame } from "lucide-react";
 
 const CATEGORIES = [
   { id: 'general', label: 'Home' },
@@ -345,7 +345,7 @@ export const HeroSection = ({
         <div>
           <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border-l-4 border-orange-400 rounded-lg p-4 mb-8">
             <h3 className="text-3xl font-bold text-gray-900 capitalize flex items-center gap-3">
-              <Fire className="text-orange-500" size={32} />
+              <Flame className="text-orange-500" size={32} />
               {searchQuery ? `Search Results for "${searchQuery}"` : `Latest ${currentCategory} News`}
             </h3>
           </div>
