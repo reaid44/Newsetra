@@ -24,7 +24,7 @@
     <meta name="twitter:description" content="Your smart, fast news companion." />
     <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
 
-    <!-- ✅ Structured Data (JSON-LD for Google News) -->
+    <!-- ✅ Structured Data (Google News Schema) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -42,15 +42,35 @@
     </script>
   </head>
 
-  <body>  
-    <div id="root"></div>
-    <form action="https://formspree.io/f/xrbkvqlg" method="POST">
-  <label for="email">Subscribe:</label>
-  <input type="email" name="email" placeholder="Your email" required>
-  <button type="submit">Subscribe</button>
-</form>
+  <body style="margin: 0; padding: 0; font-family: Arial, sans-serif;">
 
-    
+    <!-- React App Mount Point -->
+    <div id="root"></div>
+
+    <!-- ✅ Newsletter Subscription Form -->
+    <form 
+      action="https://formspree.io/f/xrbkvqlg" 
+      method="POST" 
+      style="margin: 40px auto; padding: 25px; max-width: 450px; background-color: #f9f9f9; border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); text-align: center;">
+      
+      <h2 style="margin-bottom: 20px; color: #333;">📬 Subscribe to Newsletter</h2>
+      
+      <input 
+        type="email" 
+        name="email" 
+        placeholder="Enter your email address" 
+        required 
+        style="width: 85%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px;" 
+      />
+      <br />
+      <button 
+        type="submit" 
+        style="padding: 10px 20px; background-color: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        Subscribe
+      </button>
+    </form>
+
+    <!-- ✅ React App Bundle -->
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
