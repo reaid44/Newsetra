@@ -1,23 +1,45 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <!-- ✅ Basic SEO -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Newsetra – Smart Daily News from USA</title>
-    <meta name="description" content="Get the latest breaking news on politics, sports, entertainment, and business – curated daily on Newsetra." />
+    <meta name="description" content="Get the latest breaking news on politics, sports, entertainment, and business – curated daily from top US sources." />
     <meta name="keywords" content="Newsetra, Daily News, US News, Politics, Sports, Entertainment, Business, Breaking News" />
     <meta name="author" content="Lovable" />
+    <meta name="robots" content="index, follow" />
 
-    <meta property="og:title" content="Newsetra" />
+    <!-- ✅ Open Graph (Facebook, LinkedIn, etc.) -->
+    <meta property="og:title" content="Newsetra – Smart Daily News from USA" />
     <meta property="og:description" content="Your smart, fast news companion." />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta property="og:url" content="https://newsetra.vercel.app" />
 
+    <!-- ✅ Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@lovable_dev" />
+    <meta name="twitter:title" content="Newsetra – Smart Daily News from USA" />
+    <meta name="twitter:description" content="Your smart, fast news companion." />
     <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+
+    <!-- ✅ Structured Data (JSON-LD for Google News) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "NewsMediaOrganization",
+      "name": "Newsetra",
+      "url": "https://newsetra.vercel.app",
+      "logo": "https://lovable.dev/opengraph-image-p98pqg.png",
+      "sameAs": ["https://github.com/reaid44/Newsetra"],
+      "description": "Get daily US news covering politics, sports, business, and more.",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Newsetra"
+      }
+    }
+    </script>
   </head>
 
   <body>
@@ -25,4 +47,3 @@
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-
