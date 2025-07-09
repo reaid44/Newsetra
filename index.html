@@ -4,7 +4,7 @@
     <!-- ✅ Basic SEO -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
+
     <!-- ✅ Google Site Verification -->
     <meta name="google-site-verification" content="5W7-_aa-aETPm8ot8m8l-Qwzq6b5e0dyzC8l3n2peRU" />
 
@@ -44,17 +44,78 @@
       }
     }
     </script>
+
+    <!-- Optional basic styling for form -->
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        background-color: #f9f9f9;
+      }
+      form {
+        background: white;
+        max-width: 450px;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+      }
+      input[type="email"] {
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 1rem;
+      }
+      button {
+        background-color: #007BFF;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1rem;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      img {
+        max-width: 100%;
+        height: auto;
+        display: block;
+        margin: 0 auto;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      }
+    </style>
   </head>
 
-  <body>  
+  <body>
     <div id="root"></div>
 
-    <!-- ✅ Newsletter Subscribe Form -->
+    <!-- Newsletter Subscribe Form -->
     <form action="https://formspree.io/f/xrbkvqlg" method="POST">
-      <label for="email">Subscribe:</label>
-      <input type="email" name="email" placeholder="Your email" required />
+      <label for="email">Subscribe to our newsletter:</label>
+      <input
+        type="email"
+        id="email"
+        name="email"
+        placeholder="Enter your email address"
+        required
+      />
       <button type="submit">Subscribe</button>
     </form>
+
+    <!-- Lazy loading WebP image -->
+    <img
+      src="/images/example-image.webp"
+      loading="lazy"
+      alt="Descriptive alt text"
+      width="600"
+      height="400"
+    />
 
     <script type="module" src="/src/main.tsx"></script>
   </body>
