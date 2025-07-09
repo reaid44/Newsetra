@@ -4,6 +4,10 @@
     <!-- ✅ Basic SEO -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- ✅ Google Site Verification -->
+    <meta name="google-site-verification" content="5W7-_aa-aETPm8ot8m8l-Qwzq6b5e0dyzC8l3n2peRU" />
+
     <title>Newsetra – Smart Daily News from USA</title>
     <meta name="description" content="Get the latest breaking news on politics, sports, entertainment, and business – curated daily from top US sources." />
     <meta name="keywords" content="Newsetra, Daily News, US News, Politics, Sports, Entertainment, Business, Breaking News" />
@@ -24,7 +28,7 @@
     <meta name="twitter:description" content="Your smart, fast news companion." />
     <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
 
-    <!-- ✅ Structured Data (Google News Schema) -->
+    <!-- ✅ Structured Data (JSON-LD for Google News) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -42,35 +46,16 @@
     </script>
   </head>
 
-  <body style="margin: 0; padding: 0; font-family: Arial, sans-serif;">
-
-    <!-- React App Mount Point -->
+  <body>  
     <div id="root"></div>
 
-    <!-- ✅ Newsletter Subscription Form -->
-    <form 
-      action="https://formspree.io/f/xrbkvqlg" 
-      method="POST" 
-      style="margin: 40px auto; padding: 25px; max-width: 450px; background-color: #f9f9f9; border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); text-align: center;">
-      
-      <h2 style="margin-bottom: 20px; color: #333;">📬 Subscribe to Newsletter</h2>
-      
-      <input 
-        type="email" 
-        name="email" 
-        placeholder="Enter your email address" 
-        required 
-        style="width: 85%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px;" 
-      />
-      <br />
-      <button 
-        type="submit" 
-        style="padding: 10px 20px; background-color: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer;">
-        Subscribe
-      </button>
+    <!-- ✅ Newsletter Subscribe Form -->
+    <form action="https://formspree.io/f/xrbkvqlg" method="POST">
+      <label for="email">Subscribe:</label>
+      <input type="email" name="email" placeholder="Your email" required />
+      <button type="submit">Subscribe</button>
     </form>
 
-    <!-- ✅ React App Bundle -->
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
