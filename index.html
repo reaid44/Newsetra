@@ -4,15 +4,12 @@
     <!-- ✅ Basic SEO -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <!-- ✅ Google Site Verification -->
-    <meta name="google-site-verification" content="5W7-_aa-aETPm8ot8m8l-Qwzq6b5e0dyzC8l3n2peRU" />
-
     <title>Newsetra – Smart Daily News from USA</title>
     <meta name="description" content="Get the latest breaking news on politics, sports, entertainment, and business – curated daily from top US sources." />
     <meta name="keywords" content="Newsetra, Daily News, US News, Politics, Sports, Entertainment, Business, Breaking News" />
     <meta name="author" content="Lovable" />
     <meta name="robots" content="index, follow" />
+    <meta name="google-site-verification" content="5W7-_aa-aETPm8ot8m8l-Qwzq6b5e0dyzC8l3n2peRU" />
 
     <!-- ✅ Open Graph (Facebook, LinkedIn, etc.) -->
     <meta property="og:title" content="Newsetra – Smart Daily News from USA" />
@@ -45,23 +42,29 @@
     }
     </script>
 
-    <!-- Optional basic styling for form -->
+    <!-- ✅ Style -->
     <style>
       body {
         font-family: Arial, sans-serif;
-        margin: 20px;
+        margin: 0;
+        padding: 20px;
         background-color: #f9f9f9;
+        text-align: center;
+      }
+      header img {
+        height: 60px;
+        margin-bottom: 20px;
       }
       form {
-        background: white;
-        max-width: 450px;
+        background: #fff;
+        display: inline-block;
         padding: 20px;
         border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         margin-bottom: 30px;
       }
       input[type="email"] {
-        width: 100%;
+        width: 250px;
         padding: 10px;
         margin-top: 10px;
         margin-bottom: 15px;
@@ -81,11 +84,8 @@
       button:hover {
         background-color: #0056b3;
       }
-      img {
-        max-width: 100%;
-        height: auto;
-        display: block;
-        margin: 0 auto;
+      img.lazy {
+        margin-top: 40px;
         border-radius: 8px;
         box-shadow: 0 2px 8px rgba(0,0,0,0.1);
       }
@@ -93,30 +93,38 @@
   </head>
 
   <body>
-    <div id="root"></div>
+    <!-- ✅ Logo -->
+    <header>
+      <img src="/logo.png" alt="Newsetra Logo" />
+    </header>
 
-    <!-- Newsletter Subscribe Form -->
+    <!-- ✅ Newsletter Subscribe Form -->
     <form action="https://formspree.io/f/xrbkvqlg" method="POST">
-      <label for="email">Subscribe to our newsletter:</label>
+      <h3>Subscribe to our Newsletter</h3>
       <input
         type="email"
-        id="email"
         name="email"
         placeholder="Enter your email address"
         required
       />
+      <br />
       <button type="submit">Subscribe</button>
     </form>
 
-    <!-- Lazy loading WebP image -->
+    <!-- ✅ React App Mount Point -->
+    <div id="root"></div>
+
+    <!-- ✅ Optional Lazy Image -->
     <img
+      class="lazy"
       src="/images/example-image.webp"
       loading="lazy"
-      alt="Descriptive alt text"
+      alt="News example"
       width="600"
       height="400"
     />
 
+    <!-- ✅ React script entry -->
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
